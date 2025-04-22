@@ -17,16 +17,14 @@ const config = require('./config/config');
 const app = express();
 
 // Middleware
-app.use(helmet()); // Bảo mật headers
-app.use(morgan('dev')); // Logging
-app.use(cors()); // Cho phép CORS
-app.use(express.json()); // Phân tích JSON request body
-app.use(express.urlencoded({ extended: false })); // Phân tích urlencoded request body
+app.use(helmet()); 
+app.use(morgan('dev')); 
+app.use(cors()); 
+app.use(express.json()); 
+app.use(express.urlencoded({ extended: false })); 
 
-// Kiểm tra kết nối đến database
 testConnection().then(isConnected => {
   if (isConnected) {
-    // Kiểm tra cấu trúc database
     verifyDatabaseSchema().then(isValid => {
       if (isValid) {
         console.log('Cơ sở dữ liệu sẵn sàng để sử dụng.');
