@@ -1,0 +1,35 @@
+{
+  "name": "blogtce-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/letan050635/blogTCE-API.git"
+  },
+  "author": "TAN",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/letan050635/blogTCE-API/issues"
+  },
+  "homepage": "https://github.com/letan050635/blogTCE-API#readme",
+  "description": "",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^4.21.2",
+    "express-validator": "^7.2.1",
+    "helmet": "^7.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "moment": "^2.30.1",
+    "morgan": "^1.10.0",
+    "mysql2": "^3.14.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
