@@ -2,22 +2,12 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 
-/**
- * Tạo JWT token
- * @param {number} userId - ID người dùng
- * @returns {string} - JWT token
- */
 const generateToken = (userId) => {
   return jwt.sign({ id: userId }, config.jwt.secret, {
     expiresIn: config.jwt.expiresIn
   });
 };
 
-/**
- * Đăng ký tài khoản mới
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
 exports.register = async (req, res) => {
   try {
     const { username, email, password, fullName, department, position, phone } = req.body;
@@ -69,22 +59,14 @@ exports.register = async (req, res) => {
   }
 };
 
-/**
- * Đăng nhập
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
 exports.login = async (req, res) => {
   try {
     const { username, password } = req.body;
-    
-    // Tìm người dùng theo tên đăng nhập hoặc email
     const user = await User.findByUsernameOrEmail(username);
     if (!user) {
       return res.status(401).json({ message: 'Tên đăng nhập hoặc email không tồn tại' });
     }
-    
-    // Kiểm tra mật khẩu
+
     const isMatch = await User.comparePassword(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Mật khẩu không chính xác' });
@@ -114,11 +96,7 @@ exports.login = async (req, res) => {
   }
 };
 
-/**
- * Lấy thông tin người dùng hiện tại
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
+
 exports.getCurrentUser = async (req, res) => {
   try {
     const user = req.user;
@@ -140,11 +118,7 @@ exports.getCurrentUser = async (req, res) => {
   }
 };
 
-/**
- * Cập nhật thông tin người dùng
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
+
 exports.updateProfile = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -179,11 +153,6 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-/**
- * Đổi mật khẩu
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
 exports.changePassword = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -208,11 +177,6 @@ exports.changePassword = async (req, res) => {
   }
 };
 
-/**
- * Quên mật khẩu (giả lập gửi email)
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
 exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -222,10 +186,6 @@ exports.forgotPassword = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'Email không tồn tại trong hệ thống' });
     }
-    
-    // Trong ứng dụng thực tế, tại đây sẽ tạo token reset password
-    // và gửi email đặt lại mật khẩu
-    
     // Giả lập thành công
     res.json({
       message: 'Email đặt lại mật khẩu đã được gửi đi',
@@ -236,12 +196,7 @@ exports.forgotPassword = async (req, res) => {
     res.status(500).json({ message: 'Lỗi máy chủ' });
   }
 };
-
-/**
- * Danh sách người dùng (chỉ admin)
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
+ 
 exports.getUsers = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;

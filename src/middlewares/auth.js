@@ -2,23 +2,15 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 const { query } = require('../config/db');
 
-/**
- * Middleware xác thực JWT
- * Kiểm tra token trong header và xác thực người dùng
- */
 exports.authenticate = async (req, res, next) => {
   try {
-    // Lấy token từ header
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({ message: 'Không có token xác thực' });
     }
 
     const token = authHeader.split(' ')[1];
-
-    // Xác thực token
     const decoded = jwt.verify(token, config.jwt.secret);
-
     // Kiểm tra người dùng trong cơ sở dữ liệu
     const user = await query('SELECT id, username, email, fullName, department, position, phone, avatar, role FROM users WHERE id = ?', [decoded.id]);
 
@@ -58,10 +50,7 @@ exports.isAdmin = (req, res, next) => {
   next();
 };
 
-/**
- * Middleware tùy chọn xác thực
- * Nếu có token thì xác thực, không có cũng không sao
- */
+
 exports.optionalAuth = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
@@ -72,17 +61,30 @@ exports.optionalAuth = async (req, res, next) => {
     }
 
     const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, config.jwt.secret);
+    
+    try {
+      const decoded = jwt.verify(token, config.jwt.secret);
+      
+      // Thêm defensive coding
+      if (!decoded || !decoded.id) {
+        console.log('Token không hợp lệ hoặc thiếu ID');
+        return next();
+      }
 
-    const user = await query('SELECT id, username, email, fullName, department, position, phone, avatar, role FROM users WHERE id = ?', [decoded.id]);
+      const users = await query('SELECT id, username, email, fullName, department, position, phone, avatar, role FROM users WHERE id = ?', [decoded.id]);
 
-    if (user && user.length > 0) {
-      req.user = user[0];
+      if (users && users.length > 0) {
+        req.user = users[0];
+      }
+    } catch (error) {
+      console.log('Lỗi xác thực token:', error.message);
+      // Vẫn tiếp tục mà không đặt req.user
     }
     
     next();
   } catch (error) {
-    // Token không hợp lệ, vẫn tiếp tục nhưng không đặt req.user
+    console.error('Lỗi trong optionalAuth:', error);
+    // Đổi sang next() thay vì trả về lỗi 500
     next();
   }
 };

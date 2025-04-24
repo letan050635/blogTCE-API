@@ -1,10 +1,5 @@
 const Regulation = require('../models/Regulation');
 
-/**
- * Lấy danh sách quy định
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
 exports.getRegulations = async (req, res) => {
   try {
     // Lấy các tham số từ query string

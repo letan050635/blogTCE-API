@@ -1,10 +1,5 @@
 const Notification = require('../models/Notification');
 
-/**
- * Lấy danh sách thông báo
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
 exports.getNotifications = async (req, res) => {
   try {
     // Lấy các tham số từ query string
@@ -38,11 +33,6 @@ exports.getNotifications = async (req, res) => {
   }
 };
 
-/**
- * Lấy thông tin chi tiết thông báo
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
 exports.getNotificationById = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
@@ -62,11 +52,7 @@ exports.getNotificationById = async (req, res) => {
   }
 };
 
-/**
- * Tạo thông báo mới (chỉ admin)
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
+
 exports.createNotification = async (req, res) => {
   try {
     const { title, brief, content, date, updateDate, isNew, useHtml } = req.body;
@@ -92,11 +78,6 @@ exports.createNotification = async (req, res) => {
   }
 };
 
-/**
- * Cập nhật thông báo (chỉ admin)
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
 exports.updateNotification = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
@@ -129,11 +110,6 @@ exports.updateNotification = async (req, res) => {
   }
 };
 
-/**
- * Xóa thông báo (chỉ admin)
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
 exports.deleteNotification = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
@@ -154,11 +130,6 @@ exports.deleteNotification = async (req, res) => {
   }
 };
 
-/**
- * Cập nhật trạng thái đọc thông báo
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
 exports.updateReadStatus = async (req, res) => {
   try {
     const id = parseInt(req.params.id);
@@ -183,11 +154,6 @@ exports.updateReadStatus = async (req, res) => {
   }
 };
 
-/**
- * Đánh dấu tất cả thông báo là đã đọc
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- */
 exports.markAllAsRead = async (req, res) => {
   try {
     const userId = req.user.id;

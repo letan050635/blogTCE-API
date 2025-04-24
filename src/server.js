@@ -60,6 +60,11 @@ app.use((err, req, res, next) => {
   });
 });
 
+app.use(cors({
+  origin: config.frontendUrl,
+  credentials: true
+}));
+
 // Khởi động server
 const PORT = config.port || 5000;
 app.listen(PORT, () => {

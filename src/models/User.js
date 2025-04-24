@@ -10,9 +10,8 @@ class User {
   static async create(userData) {
     const { username, email, password, fullName, department = null, position = null, phone = null } = userData;
     
-    // Mã hóa mật khẩu
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    // Bỏ mã hóa mật khẩu, sử dụng mật khẩu gốc
+    const hashedPassword = password;
     
     // Chèn vào DB
     const result = await query(
@@ -113,9 +112,8 @@ class User {
    * @returns {boolean} - Kết quả cập nhật
    */
   static async changePassword(id, newPassword) {
-    // Mã hóa mật khẩu mới
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    // Bỏ mã hóa mật khẩu, sử dụng mật khẩu gốc
+    const hashedPassword = newPassword;
     
     // Cập nhật mật khẩu
     await query('UPDATE users SET password = ? WHERE id = ?', [hashedPassword, id]);
@@ -129,7 +127,8 @@ class User {
    * @returns {boolean} - Kết quả so sánh
    */
   static async comparePassword(enteredPassword, storedPassword) {
-    return await bcrypt.compare(enteredPassword, storedPassword);
+    // So sánh trực tiếp thay vì sử dụng bcrypt
+    return enteredPassword === storedPassword;
   }
   
   /**
