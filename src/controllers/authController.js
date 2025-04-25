@@ -172,7 +172,7 @@ exports.changePassword = async (req, res) => {
     
     res.json({ message: 'Đổi mật khẩu thành công' });
   } catch (error) {
-    console.error('Lỗi đổi mật khẩu:', error);
+    //console.error('Lỗi đổi mật khẩu:', error);
     res.status(500).json({ message: 'Lỗi máy chủ' });
   }
 };

@@ -65,6 +65,7 @@ exports.createNotification = async (req, res) => {
       date,
       updateDate,
       isNew,
+      isImportant,
       useHtml
     });
     

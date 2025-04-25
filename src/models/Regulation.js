@@ -47,7 +47,7 @@ class Regulation {
       // Nếu có userId, lấy cả trạng thái đọc
       const regulations = await query(
         `SELECT r.*,
-         CASE WHEN urs.id IS NOT NULL THEN TRUE ELSE FALSE END as read
+         CASE WHEN urs.id IS NOT NULL THEN TRUE ELSE FALSE END as \`read\`
          FROM regulations r
          LEFT JOIN user_read_status urs ON r.id = urs.itemId AND urs.itemType = 'regulation' AND urs.userId = ?
          WHERE r.id = ?`,
@@ -152,7 +152,7 @@ class Regulation {
     
     // Nếu có userId, lấy cả trạng thái đọc
     if (userId) {
-      sql += `, CASE WHEN urs.id IS NOT NULL THEN TRUE ELSE FALSE END as read`;
+      sql += `, CASE WHEN urs.id IS NOT NULL THEN TRUE ELSE FALSE END as \`read\``;
       sql += ` FROM regulations r LEFT JOIN user_read_status urs ON r.id = urs.itemId AND urs.itemType = 'regulation' AND urs.userId = ?`;
       countSql += ` FROM regulations r LEFT JOIN user_read_status urs ON r.id = urs.itemId AND urs.itemType = 'regulation' AND urs.userId = ?`;
       params.push(userId);

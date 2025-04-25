@@ -10,6 +10,7 @@ class Notification {
       date,
       updateDate = null,
       isNew = true,
+      isImportant = false,
       useHtml = false,
     } = data;
 
@@ -21,8 +22,8 @@ class Notification {
 
     // Chèn vào DB
     const result = await query(
-      `INSERT INTO notifications (title, brief, content, date, updateDate, isNew, useHtml) 
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO notifications (title, brief, content, date, updateDate, isNew, isImportant, useHtml) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         title,
         brief,
@@ -30,6 +31,7 @@ class Notification {
         formattedDate,
         formattedUpdateDate,
         isNew,
+        isImportant,
         useHtml,
       ]
     );
@@ -45,7 +47,7 @@ class Notification {
       // Nếu có userId, lấy cả trạng thái đọc
       const notifications = await query(
         `SELECT n.*,
-         CASE WHEN urs.id IS NOT NULL THEN TRUE ELSE FALSE END as read
+         CASE WHEN urs.id IS NOT NULL THEN TRUE ELSE FALSE END as \`read\`
          FROM notifications n
          LEFT JOIN user_read_status urs ON n.id = urs.itemId AND urs.itemType = 'notification' AND urs.userId = ?
          WHERE n.id = ?`,
@@ -163,7 +165,7 @@ class Notification {
         // Kiểm tra bảng user_read_status có tồn tại không
         await query("SELECT 1 FROM user_read_status LIMIT 1");
 
-        sql += `, CASE WHEN urs.id IS NOT NULL THEN TRUE ELSE FALSE END as read`;
+        sql += `, CASE WHEN urs.id IS NOT NULL THEN TRUE ELSE FALSE END as \`read\``;
         sql += ` FROM notifications n LEFT JOIN user_read_status urs ON n.id = urs.itemId AND urs.itemType = 'notification' AND urs.userId = ?`;
         countSql += ` FROM notifications n LEFT JOIN user_read_status urs ON n.id = urs.itemId AND urs.itemType = 'notification' AND urs.userId = ?`;
         params.push(userId);
