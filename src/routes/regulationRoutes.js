@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const regulationController = require('../controllers/regulationController');
-const { authenticate, isAdmin, optionalAuth } = require('../middlewares/auth');
-const validator = require('../middlewares/validator');
+const { authenticate, isAdmin, optionalAuth } = require('../middleware/auth');
+const validator = require('../middleware/validator');
 
 // Lấy danh sách quy định (public, nhưng có trạng thái đọc nếu đã đăng nhập)
 router.get(

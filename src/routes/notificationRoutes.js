@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const notificationController = require('../controllers/notificationController');
-const { authenticate, isAdmin, optionalAuth } = require('../middlewares/auth');
-const validator = require('../middlewares/validator');
+const { authenticate, isAdmin, optionalAuth } = require('../middleware/auth');
+const validator = require('../middleware/validator');
 
 // Lấy danh sách thông báo (public, nhưng có trạng thái đọc nếu đã đăng nhập)
 router.get(

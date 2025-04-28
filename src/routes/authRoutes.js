@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
-const { authenticate, isAdmin } = require('../middlewares/auth');
-const validator = require('../middlewares/validator');
+const { authenticate, isAdmin } = require('../middleware/auth');
+const validator = require('../middleware/validator');
 
 // Đăng ký tài khoản mới
 router.post(

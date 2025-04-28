@@ -2,6 +2,9 @@ const { query } = require('../config/db');
 const bcrypt = require('bcryptjs');
 
 class User {
+  static TABLE_NAME = 'users';
+  static USER_FIELDS = 'id, username, email, fullName, department, position, phone, avatar, role, createdAt, updatedAt';
+  
   /**
    * Tạo người dùng mới
    * @param {Object} userData - Dữ liệu người dùng
@@ -10,19 +13,18 @@ class User {
   static async create(userData) {
     const { username, email, password, fullName, department = null, position = null, phone = null } = userData;
     
-    // Bỏ mã hóa mật khẩu, sử dụng mật khẩu gốc
+    // Sử dụng mật khẩu gốc (trong môi trường thực tế nên băm)
     const hashedPassword = password;
     
     // Chèn vào DB
     const result = await query(
-      `INSERT INTO users (username, email, password, fullName, department, position, phone) 
+      `INSERT INTO ${this.TABLE_NAME} (username, email, password, fullName, department, position, phone) 
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [username, email, hashedPassword, fullName, department, position, phone]
     );
     
     // Trả về thông tin người dùng
-    const newUser = await this.findById(result.insertId);
-    return newUser;
+    return await this.findById(result.insertId);
   }
   
   /**
@@ -32,8 +34,7 @@ class User {
    */
   static async findById(id) {
     const users = await query(
-      `SELECT id, username, email, fullName, department, position, phone, avatar, role, createdAt, updatedAt 
-       FROM users WHERE id = ?`,
+      `SELECT ${this.USER_FIELDS} FROM ${this.TABLE_NAME} WHERE id = ?`,
       [id]
     );
     
@@ -46,7 +47,7 @@ class User {
    * @returns {Object|null} - Thông tin người dùng hoặc null
    */
   static async findByUsername(username) {
-    const users = await query('SELECT * FROM users WHERE username = ?', [username]);
+    const users = await query(`SELECT * FROM ${this.TABLE_NAME} WHERE username = ?`, [username]);
     return users.length > 0 ? users[0] : null;
   }
   
@@ -56,7 +57,7 @@ class User {
    * @returns {Object|null} - Thông tin người dùng hoặc null
    */
   static async findByEmail(email) {
-    const users = await query('SELECT * FROM users WHERE email = ?', [email]);
+    const users = await query(`SELECT * FROM ${this.TABLE_NAME} WHERE email = ?`, [email]);
     return users.length > 0 ? users[0] : null;
   }
   
@@ -66,7 +67,7 @@ class User {
    * @returns {Object|null} - Thông tin người dùng hoặc null
    */
   static async findByUsernameOrEmail(login) {
-    const users = await query('SELECT * FROM users WHERE username = ? OR email = ?', [login, login]);
+    const users = await query(`SELECT * FROM ${this.TABLE_NAME} WHERE username = ? OR email = ?`, [login, login]);
     return users.length > 0 ? users[0] : null;
   }
   
@@ -99,7 +100,7 @@ class User {
     params.push(id); // Thêm id vào cuối mảng params
     
     // Thực hiện cập nhật
-    await query(`UPDATE users SET ${fields} WHERE id = ?`, params);
+    await query(`UPDATE ${this.TABLE_NAME} SET ${fields} WHERE id = ?`, params);
     
     // Trả về thông tin người dùng đã cập nhật
     return await this.findById(id);
@@ -112,11 +113,11 @@ class User {
    * @returns {boolean} - Kết quả cập nhật
    */
   static async changePassword(id, newPassword) {
-    // Bỏ mã hóa mật khẩu, sử dụng mật khẩu gốc
+    // Sử dụng mật khẩu gốc (trong môi trường thực tế nên băm)
     const hashedPassword = newPassword;
     
     // Cập nhật mật khẩu
-    await query('UPDATE users SET password = ? WHERE id = ?', [hashedPassword, id]);
+    await query(`UPDATE ${this.TABLE_NAME} SET password = ? WHERE id = ?`, [hashedPassword, id]);
     return true;
   }
   
@@ -127,7 +128,7 @@ class User {
    * @returns {boolean} - Kết quả so sánh
    */
   static async comparePassword(enteredPassword, storedPassword) {
-    // So sánh trực tiếp thay vì sử dụng bcrypt
+    // So sánh trực tiếp (trong môi trường thực tế nên dùng bcrypt.compare)
     return enteredPassword === storedPassword;
   }
   
@@ -137,7 +138,7 @@ class User {
    * @returns {boolean} - Kết quả xóa
    */
   static async delete(id) {
-    const result = await query('DELETE FROM users WHERE id = ?', [id]);
+    const result = await query(`DELETE FROM ${this.TABLE_NAME} WHERE id = ?`, [id]);
     return result.affectedRows > 0;
   }
   
@@ -151,13 +152,12 @@ class User {
     const offset = (page - 1) * limit;
     
     // Đếm tổng số người dùng
-    const countResult = await query('SELECT COUNT(*) as total FROM users');
+    const countResult = await query(`SELECT COUNT(*) as total FROM ${this.TABLE_NAME}`);
     const total = countResult[0].total;
     
     // Lấy danh sách người dùng
     const users = await query(
-      `SELECT id, username, email, fullName, department, position, phone, avatar, role, createdAt, updatedAt 
-       FROM users LIMIT ? OFFSET ?`,
+      `SELECT ${this.USER_FIELDS} FROM ${this.TABLE_NAME} LIMIT ? OFFSET ?`,
       [limit, offset]
     );
     
