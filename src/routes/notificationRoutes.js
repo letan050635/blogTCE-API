@@ -15,6 +15,12 @@ router.get(
   notificationController.getNotifications
 );
 
+router.get(
+  '/important',
+  optionalAuth,
+  notificationController.getImportantNotifications
+);
+
 // Lấy thông tin chi tiết thông báo
 router.get(
   '/:id',

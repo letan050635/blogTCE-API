@@ -1,11 +1,7 @@
 const User = require('../models/User');
 const jwtService = require('../services/jwtService');
 
-/**
- * Trích xuất thông tin người dùng an toàn để trả về
- * @param {Object} user - Đối tượng user đầy đủ
- * @returns {Object} - Thông tin người dùng đã lọc
- */
+
 const extractSafeUserData = (user) => {
   return {
     id: user.id,
@@ -20,15 +16,9 @@ const extractSafeUserData = (user) => {
   };
 };
 
-/**
- * Controller xử lý xác thực người dùng
- */
+
 const authController = {
-  /**
-   * Đăng ký tài khoản mới
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
-   */
+
   register: async (req, res) => {
     try {
       const { username, email, password, fullName, department, position, phone } = req.body;
@@ -70,11 +60,7 @@ const authController = {
     }
   },
   
-  /**
-   * Đăng nhập
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
-   */
+
   login: async (req, res) => {
     try {
       const { username, password } = req.body;
@@ -105,11 +91,7 @@ const authController = {
     }
   },
   
-  /**
-   * Lấy thông tin người dùng hiện tại
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
-   */
+
   getCurrentUser: async (req, res) => {
     try {
       const user = req.user;
@@ -120,11 +102,7 @@ const authController = {
     }
   },
   
-  /**
-   * Cập nhật thông tin người dùng
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
-   */
+
   updateProfile: async (req, res) => {
     try {
       const userId = req.user.id;
@@ -149,11 +127,6 @@ const authController = {
     }
   },
   
-  /**
-   * Đổi mật khẩu
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
-   */
   changePassword: async (req, res) => {
     try {
       const userId = req.user.id;
@@ -178,11 +151,6 @@ const authController = {
     }
   },
   
-  /**
-   * Quên mật khẩu
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
-   */
   forgotPassword: async (req, res) => {
     try {
       const { email } = req.body;
@@ -196,7 +164,6 @@ const authController = {
       // Giả lập thành công
       res.json({
         message: 'Email đặt lại mật khẩu đã được gửi đi',
-        // Reset token sẽ được gửi trong email thực tế
       });
     } catch (error) {
       console.error('Lỗi quên mật khẩu:', error);
@@ -204,11 +171,6 @@ const authController = {
     }
   },
   
-  /**
-   * Lấy danh sách người dùng (chỉ admin)
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
-   */
   getUsers: async (req, res) => {
     try {
       const page = parseInt(req.query.page) || 1;

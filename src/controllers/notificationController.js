@@ -24,7 +24,22 @@ const notificationController = {
   updateReadStatus: BaseController.updateReadStatus(Notification, 'thông báo'),
   
   // Đánh dấu tất cả thông báo là đã đọc
-  markAllAsRead: BaseController.markAllAsRead(Notification, 'thông báo')
+  markAllAsRead: BaseController.markAllAsRead(Notification, 'thông báo'),
+
+  getImportantNotifications: async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit) || 5;
+      const userId = req.user ? req.user.id : null;
+      
+      // Lấy danh sách thông báo quan trọng
+      const notifications = await Notification.findImportant(limit, userId);
+      
+      res.json(notifications);
+    } catch (error) {
+      console.error('Lỗi lấy danh sách thông báo quan trọng:', error);
+      res.status(500).json({ message: 'Lỗi máy chủ' });
+    }
+  }
 };
 
 module.exports = notificationController;

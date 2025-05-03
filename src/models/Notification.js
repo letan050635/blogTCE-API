@@ -47,6 +47,15 @@ class Notification {
   static async markAllAsRead(userId) {
     return await BaseModel.markAllAsRead(this.TABLE_NAME, userId, this.ITEM_TYPE);
   }
+
+  static async findImportant(limit = 5, userId = null) {
+    return await this.findAll({
+      page: 1,
+      limit: limit,
+      isImportant: true,
+      userId: userId
+    });
+  }
 }
 
 module.exports = Notification;
