@@ -11,6 +11,7 @@ const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 const authRoutes = require('./routes/authRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const regulationRoutes = require('./routes/regulationRoutes');
+const fileRoutes = require('./routes/fileRoutes');
 
 // Khởi tạo express app
 const app = express();
@@ -49,6 +50,7 @@ initializeDatabase();
 app.use('/api/auth', authRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/regulations', regulationRoutes);
+app.use('/api/files', fileRoutes); 
 
 // Route mặc định
 app.get('/', (req, res) => {
