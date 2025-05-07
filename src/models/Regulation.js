@@ -1,5 +1,4 @@
 const BaseModel = require('./BaseModel');
-const File = require('./File');
 
 class Regulation {
   static TABLE_NAME = 'regulations';
@@ -62,19 +61,6 @@ class Regulation {
       isImportant: true,
       userId: userId
     });
-  }
-
-  static async delete(id) {
-    // Xóa các file đính kèm
-    await File.deleteByRelated('regulation', id);
-    
-    // Xóa quy định
-    return await BaseModel.delete(this.TABLE_NAME, id, this.ITEM_TYPE);
-  }
-  
-  // Thêm hàm lấy files đính kèm
-  static async getAttachments(id) {
-    return await File.findByRelated('regulation', id);
   }
 }
 
