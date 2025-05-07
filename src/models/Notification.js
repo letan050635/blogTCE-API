@@ -1,4 +1,5 @@
 const BaseModel = require('./BaseModel');
+const File = require('./File');
 
 class Notification {
   static TABLE_NAME = 'notifications';
@@ -55,6 +56,19 @@ class Notification {
       isImportant: true,
       userId: userId
     });
+  }
+
+  static async delete(id) {
+    // Xóa các file đính kèm
+    await File.deleteByRelated('notification', id);
+    
+    // Xóa thông báo
+    return await BaseModel.delete(this.TABLE_NAME, id, this.ITEM_TYPE);
+  }
+  
+  // Thêm hàm lấy files đính kèm
+  static async getAttachments(id) {
+    return await File.findByRelated('notification', id);
   }
 }
 

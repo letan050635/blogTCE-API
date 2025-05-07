@@ -1,6 +1,3 @@
-/**
- * Lớp controller cơ sở với các phương thức chung
- */
 class BaseController {
     /**
      * Lấy danh sách bản ghi
@@ -41,12 +38,6 @@ class BaseController {
       }
     };
     
-    /**
-     * Lấy bản ghi theo ID
-     * @param {Object} Model - Model xử lý
-     * @param {Object} req - Request object
-     * @param {Object} res - Response object
-     */
     static getById = (Model) => async (req, res) => {
       try {
         const id = parseInt(req.params.id);
@@ -66,13 +57,6 @@ class BaseController {
       }
     };
     
-    /**
-     * Tạo bản ghi mới
-     * @param {Object} Model - Model xử lý
-     * @param {string} itemName - Tên hiển thị của loại bản ghi
-     * @param {Object} req - Request object
-     * @param {Object} res - Response object
-     */
     static create = (Model, itemName) => async (req, res) => {
       try {
         // Lấy dữ liệu từ request body
@@ -91,13 +75,6 @@ class BaseController {
       }
     };
     
-    /**
-     * Cập nhật bản ghi
-     * @param {Object} Model - Model xử lý
-     * @param {string} itemName - Tên hiển thị của loại bản ghi
-     * @param {Object} req - Request object
-     * @param {Object} res - Response object
-     */
     static update = (Model, itemName) => async (req, res) => {
       try {
         const id = parseInt(req.params.id);
@@ -122,13 +99,6 @@ class BaseController {
       }
     };
     
-    /**
-     * Xóa bản ghi
-     * @param {Object} Model - Model xử lý
-     * @param {string} itemName - Tên hiển thị của loại bản ghi
-     * @param {Object} req - Request object
-     * @param {Object} res - Response object
-     */
     static delete = (Model, itemName) => async (req, res) => {
       try {
         const id = parseInt(req.params.id);
@@ -149,13 +119,6 @@ class BaseController {
       }
     };
     
-    /**
-     * Cập nhật trạng thái đọc
-     * @param {Object} Model - Model xử lý
-     * @param {string} itemName - Tên hiển thị của loại bản ghi
-     * @param {Object} req - Request object
-     * @param {Object} res - Response object
-     */
     static updateReadStatus = (Model, itemName) => async (req, res) => {
       try {
         const id = parseInt(req.params.id);
@@ -180,13 +143,6 @@ class BaseController {
       }
     };
     
-    /**
-     * Đánh dấu tất cả là đã đọc
-     * @param {Object} Model - Model xử lý
-     * @param {string} itemName - Tên hiển thị của loại bản ghi
-     * @param {Object} req - Request object
-     * @param {Object} res - Response object
-     */
     static markAllAsRead = (Model, itemName) => async (req, res) => {
       try {
         const userId = req.user.id;
