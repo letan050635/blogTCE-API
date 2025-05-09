@@ -5,8 +5,9 @@ const fs = require('fs');
 const multer = require('multer');
 
 // Cấu hình xác thực Google Drive
-const CREDENTIALS_PATH = path.join(__dirname, '../../config/credentials.json');
+const CREDENTIALS_PATH = path.join(__dirname, '../../credentials.json'); // Đường dẫn đúng đến file gốc
 const SCOPES = ['https://www.googleapis.com/auth/drive'];
+const DEFAULT_FOLDER_ID = process.env.GOOGLE_DRIVE_FOLDER_ID || null; // Thêm folder ID mặc định
 
 // Cấu hình multer để xử lý file upload
 const storage = multer.diskStorage({
@@ -36,8 +37,18 @@ class GoogleDriveService {
 
   initializeDrive() {
     try {
+      // Kiểm tra file credentials.json tồn tại
+      console.log('Đường dẫn đến file credentials:', CREDENTIALS_PATH);
+      if (!fs.existsSync(CREDENTIALS_PATH)) {
+        console.error('File credentials.json không tồn tại tại đường dẫn:', CREDENTIALS_PATH);
+        return;
+      }
+      
       // Đọc file credential
       const credentials = JSON.parse(fs.readFileSync(CREDENTIALS_PATH, 'utf8'));
+      
+      // Log email service account để xác nhận
+      console.log('Đang sử dụng service account:', credentials.client_email);
       
       const auth = new google.auth.JWT(
         credentials.client_email,
@@ -50,10 +61,11 @@ class GoogleDriveService {
       console.log('Google Drive API initialized successfully!');
     } catch (error) {
       console.error('Error initializing Google Drive API:', error);
+      if (error.stack) console.error(error.stack);
     }
   }
 
-  async uploadFile(filePath, fileName, mimeType, folderId = null) {
+  async uploadFile(filePath, fileName, mimeType, folderId = DEFAULT_FOLDER_ID) {
     try {
       const fileMetadata = {
         name: fileName,
@@ -65,11 +77,16 @@ class GoogleDriveService {
         body: fs.createReadStream(filePath)
       };
 
+      console.log('Đang tải file lên Google Drive...');
+      console.log('File metadata:', { name: fileName, folderId });
+      
       const response = await this.drive.files.create({
         resource: fileMetadata,
         media: media,
         fields: 'id,name,mimeType,size,webViewLink,thumbnailLink'
       });
+
+      console.log('File đã được tải lên với ID:', response.data.id);
 
       // Thiết lập quyền truy cập công khai cho file
       await this.drive.permissions.create({
@@ -96,7 +113,12 @@ class GoogleDriveService {
       return fileData;
     } catch (error) {
       console.error('Error uploading file to Google Drive:', error);
-      throw new Error('Không thể tải file lên Google Drive');
+      // Ghi lại chi tiết lỗi để dễ dàng debug
+      if (error.response) {
+        console.error('Response error data:', error.response.data);
+        console.error('Response error status:', error.response.status);
+      }
+      throw new Error('Không thể tải file lên Google Drive: ' + error.message);
     }
   }
 
@@ -105,10 +127,14 @@ class GoogleDriveService {
       await this.drive.files.delete({
         fileId: fileId
       });
+      console.log('File đã xóa thành công:', fileId);
       return true;
     } catch (error) {
       console.error('Error deleting file from Google Drive:', error);
-      throw new Error('Không thể xóa file từ Google Drive');
+      if (error.response) {
+        console.error('Response error data:', error.response.data);
+      }
+      throw new Error('Không thể xóa file từ Google Drive: ' + error.message);
     }
   }
 }
