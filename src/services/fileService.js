@@ -17,8 +17,16 @@ const storage = multer.diskStorage({
     cb(null, tempDir);
   },
   filename: function (req, file, cb) {
+    // Fix encoding issue - Convert từ Latin-1 sang UTF-8
+    file.originalname = Buffer.from(file.originalname, 'latin1').toString('utf8');
+    
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
+    const extension = path.extname(file.originalname);
+    const nameWithoutExt = path.basename(file.originalname, extension);
+    
+    // Tạo tên file an toàn cho hệ thống (chỉ dùng để lưu tạm)
+    const safeFileName = `${uniqueSuffix}${extension}`;
+    cb(null, safeFileName);
   }
 });
 
@@ -68,10 +76,12 @@ class GoogleDriveService {
   async uploadFile(filePath, fileName, mimeType, folderId = DEFAULT_FOLDER_ID) {
     try {
       const fileMetadata = {
+        // Đảm bảo tên file được encode đúng với UTF-8
         name: fileName,
         parents: folderId ? [folderId] : []
       };
 
+      // Sử dụng stream để đọc file, tối ưu memory
       const media = {
         mimeType,
         body: fs.createReadStream(filePath)
@@ -80,45 +90,57 @@ class GoogleDriveService {
       console.log('Đang tải file lên Google Drive...');
       console.log('File metadata:', { name: fileName, folderId });
       
+      // Request với fields tối thiểu để response nhanh hơn
       const response = await this.drive.files.create({
         resource: fileMetadata,
         media: media,
-        fields: 'id,name,mimeType,size,webViewLink,thumbnailLink'
+        fields: 'id,name,mimeType,size'
       });
 
       console.log('File đã được tải lên với ID:', response.data.id);
 
-      // Thiết lập quyền truy cập công khai cho file
-      await this.drive.permissions.create({
-        fileId: response.data.id,
-        requestBody: {
-          role: 'reader',
-          type: 'anyone'
-        }
+      // Set quyền truy cập không đồng bộ (không chờ)
+      this.setPublicPermission(response.data.id).catch(err => {
+        console.warn('Error setting permissions:', err);
       });
 
-      // Lấy link download
+      // Tạo links trực tiếp
       const downloadLink = `https://drive.google.com/uc?export=download&id=${response.data.id}`;
+      const viewLink = `https://drive.google.com/file/d/${response.data.id}/view`;
 
       const fileData = {
         fileId: response.data.id,
         fileName: response.data.name,
         fileType: response.data.mimeType,
         fileSize: response.data.size,
-        viewLink: response.data.webViewLink,
+        viewLink: viewLink,
         downloadLink: downloadLink,
-        thumbnailLink: response.data.thumbnailLink || null
+        thumbnailLink: null
       };
 
       return fileData;
     } catch (error) {
       console.error('Error uploading file to Google Drive:', error);
-      // Ghi lại chi tiết lỗi để dễ dàng debug
       if (error.response) {
         console.error('Response error data:', error.response.data);
         console.error('Response error status:', error.response.status);
       }
       throw new Error('Không thể tải file lên Google Drive: ' + error.message);
+    }
+  }
+
+  // Hàm set permission riêng để có thể chạy async
+  async setPublicPermission(fileId) {
+    try {
+      await this.drive.permissions.create({
+        fileId: fileId,
+        requestBody: {
+          role: 'reader',
+          type: 'anyone'
+        }
+      });
+    } catch (error) {
+      console.error('Error setting file permissions:', error);
     }
   }
 

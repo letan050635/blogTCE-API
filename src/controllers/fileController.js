@@ -15,6 +15,11 @@ const fileController = {
    */
   uploadFiles: async (req, res) => {
     try {
+      // Log để debug
+      console.log('Upload request received');
+      console.log('Body:', req.body);
+      console.log('Files:', req.files ? req.files.length : 0);
+      
       const { relatedType, relatedId } = req.body;
       
       // Kiểm tra thông tin liên kết
@@ -33,27 +38,34 @@ const fileController = {
       // Xử lý từng file một lần
       for (const file of req.files) {
         try {
-          // Giữ nguyên tên file UTF-8
+          // Sử dụng tên file gốc đã được xử lý UTF-8 trong middleware
           const fileName = file.originalname;
           const mimeType = file.mimetype;
           const filePath = file.path;
           
           console.log(`Uploading file: ${fileName}`);
+          console.log(`MIME type: ${mimeType}`);
+          console.log(`File path: ${filePath}`);
           
           // Upload lên Google Drive với tên file gốc
           const fileData = await driveService.uploadFile(filePath, fileName, mimeType);
           
           // Thêm thông tin liên kết
           fileData.relatedType = relatedType;
-          fileData.relatedId = relatedId;
+          fileData.relatedId = parseInt(relatedId);
+          
+          console.log('File data to save:', fileData);
           
           // Lưu thông tin file vào database
           const savedFile = await File.create(fileData);
           uploadedFiles.push(savedFile);
           
+          console.log(`File uploaded successfully: ${fileName}`);
+          
           // Xóa file tạm sau khi upload thành công
           try {
             fs.unlinkSync(filePath);
+            console.log(`Temp file deleted: ${filePath}`);
           } catch (cleanupError) {
             console.error('Error cleaning up temp file:', cleanupError);
           }
@@ -143,6 +155,8 @@ const fileController = {
     try {
       const { id } = req.params;
       
+      console.log(`Deleting file with ID: ${id}`);
+      
       // Lấy thông tin file từ database
       const file = await File.findById(id);
       
@@ -150,9 +164,12 @@ const fileController = {
         return res.status(404).json({ message: 'Không tìm thấy file' });
       }
       
+      console.log(`Found file to delete:`, file);
+      
       // Xóa file từ Google Drive
       try {
         await driveService.deleteFile(file.fileId);
+        console.log(`File deleted from Google Drive: ${file.fileId}`);
       } catch (driveError) {
         console.error('Error deleting file from Google Drive:', driveError);
         // Vẫn tiếp tục xóa từ database nếu xóa từ Drive thất bại
@@ -160,6 +177,7 @@ const fileController = {
       
       // Xóa thông tin file từ database
       await File.delete(id);
+      console.log(`File deleted from database: ${id}`);
       
       res.json({ message: 'Xóa file thành công' });
     } catch (error) {
