@@ -5,9 +5,9 @@ const fs = require('fs');
 const multer = require('multer');
 
 // Cấu hình xác thực Google Drive
-const CREDENTIALS_PATH = path.join(__dirname, '../../credentials.json'); // Đường dẫn đúng đến file gốc
+const CREDENTIALS_PATH = path.join(__dirname, '../../credentials.json'); 
 const SCOPES = ['https://www.googleapis.com/auth/drive'];
-const DEFAULT_FOLDER_ID = process.env.GOOGLE_DRIVE_FOLDER_ID || null; // Thêm folder ID mặc định
+const DEFAULT_FOLDER_ID = process.env.GOOGLE_DRIVE_FOLDER_ID || null; 
 
 // Cấu hình multer để xử lý file upload
 const storage = multer.diskStorage({
