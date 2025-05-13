@@ -19,6 +19,9 @@ const regulationController = {
       // Lấy dữ liệu từ request body
       const data = req.body;
       
+      // Đảm bảo không có updateDate khi tạo mới
+      delete data.updateDate;
+      
       // Tạo quy định mới
       const regulation = await Regulation.create(data);
       
@@ -43,6 +46,8 @@ const regulationController = {
       if (!existingRegulation) {
         return res.status(404).json({ message: `Không tìm thấy quy định` });
       }
+      
+      // updateDate sẽ được tự động set trong model
       
       // Cập nhật quy định
       const updatedRegulation = await Regulation.update(id, data);

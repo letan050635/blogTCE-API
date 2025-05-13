@@ -19,6 +19,9 @@ class Regulation {
     data.isImportant = data.isImportant !== undefined ? data.isImportant : false;
     data.useHtml = data.useHtml !== undefined ? data.useHtml : true;
     
+    // Không set updateDate khi tạo mới
+    data.updateDate = null;
+    
     return await BaseModel.create(this.TABLE_NAME, data, fields, this.ITEM_TYPE);
   }
   
@@ -27,6 +30,9 @@ class Regulation {
       'title', 'brief', 'content', 'date', 'updateDate', 
       'isNew', 'isImportant', 'useHtml'
     ];
+    
+    // Luôn set updateDate là ngày hiện tại khi update
+    data.updateDate = new Date().toISOString().split('T')[0];
     
     return await BaseModel.update(this.TABLE_NAME, id, data, allowedFields, this.ITEM_TYPE);
   }
