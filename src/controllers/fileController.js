@@ -3,10 +3,14 @@ const fs = require('fs');
 const path = require('path');
 const { driveService, upload } = require('../services/fileService');
 const File = require('../models/File');
+const uploadErrorHandler = require('../middleware/uploadErrorHandler');
 
 const fileController = {
-  // Middleware xử lý upload file
-  uploadMiddleware: upload.array('files', 5), // Cho phép upload tối đa 5 file cùng lúc
+  // Middleware xử lý upload file với error handler
+  uploadMiddleware: [
+    upload.array('files', 5),
+    uploadErrorHandler
+  ],
   
   /**
    * Xử lý upload file

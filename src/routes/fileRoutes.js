@@ -9,7 +9,7 @@ router.post(
   '/upload',
   authenticate,
   isAdmin,
-  fileController.uploadMiddleware,
+  ...fileController.uploadMiddleware,
   fileController.uploadFiles
 );
 
