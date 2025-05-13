@@ -23,8 +23,10 @@ app.use(cors({
   origin: config.frontendUrl,
   credentials: true
 })); 
-app.use(express.json()); 
-app.use(express.urlencoded({ extended: false })); 
+
+// Tăng giới hạn kích thước request body
+app.use(express.json({ limit: '50mb' })); 
+app.use(express.urlencoded({ extended: false, limit: '50mb' }));
 
 // Kiểm tra kết nối database
 const initializeDatabase = async () => {

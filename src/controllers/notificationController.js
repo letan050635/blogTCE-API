@@ -19,6 +19,9 @@ const notificationController = {
       // Lấy dữ liệu từ request body
       const data = req.body;
       
+      // Đảm bảo không có updateDate khi tạo mới
+      delete data.updateDate;
+      
       // Tạo thông báo mới
       const notification = await Notification.create(data);
       
@@ -43,6 +46,8 @@ const notificationController = {
       if (!existingNotification) {
         return res.status(404).json({ message: `Không tìm thấy thông báo` });
       }
+      
+      // updateDate sẽ được tự động set trong model
       
       // Cập nhật thông báo
       const updatedNotification = await Notification.update(id, data);

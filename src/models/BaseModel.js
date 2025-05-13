@@ -55,8 +55,10 @@ class BaseModel {
     if (data.date) {
       data.date = moment(data.date).format('YYYY-MM-DD');
     }
-    if (data.updateDate) {
-      data.updateDate = moment(data.updateDate).format('YYYY-MM-DD');
+    // Khi tạo mới, không có updateDate
+    if (data.updateDate === null || data.updateDate === '') {
+      delete data.updateDate;
+      fields = fields.filter(field => field !== 'updateDate');
     }
     
     // Chuẩn bị các trường và giá trị
