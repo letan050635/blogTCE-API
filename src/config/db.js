@@ -8,12 +8,11 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME || 'tce_ems_db',
   port: process.env.DB_PORT || 3306,
   waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
+  connectionLimit: 15,
+  queueLimit: 100,
   charset: 'utf8mb4'
 });
 
-// Kiểm tra kết nối
 const testConnection = async () => {
   try {
     const connection = await pool.getConnection();
@@ -48,15 +47,6 @@ const verifyDatabaseSchema = async () => {
     
     // Kiểm tra cấu trúc của từng bảng để xác nhận
     const requiredTables = ['users', 'notifications', 'regulations', 'user_read_status'];
-    
-    for (const table of requiredTables) {
-      if (!tableNames.includes(table)) {
-        console.warn(`Cảnh báo: Bảng ${table} không tồn tại trong cơ sở dữ liệu.`);
-      } else {
-        const columns = await query(`SHOW COLUMNS FROM ${table}`);
-        console.log(`Cấu trúc bảng ${table}:`, columns.map(c => c.Field));
-      }
-    }
     
     return true;
   } catch (error) {

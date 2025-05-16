@@ -1,16 +1,7 @@
 const { query } = require('../config/db');
 const moment = require('moment');
 
-/**
- * Service xử lý các thao tác cơ sở dữ liệu
- */
 const dbService = {
-  /**
-   * Thực hiện truy vấn SQL với xử lý lỗi
-   * @param {string} sql - Câu truy vấn SQL
-   * @param {Array} params - Tham số
-   * @returns {Promise<any>} - Kết quả truy vấn
-   */
   executeQuery: async (sql, params = []) => {
     try {
       return await query(sql, params);
@@ -20,22 +11,12 @@ const dbService = {
     }
   },
   
-  /**
-   * Chuyển đổi định dạng ngày
-   * @param {string|Date} date - Ngày cần chuyển đổi
-   * @param {string} format - Định dạng đầu ra (mặc định YYYY-MM-DD)
-   * @returns {string|null} - Chuỗi ngày đã định dạng
-   */
   formatDate: (date, format = 'YYYY-MM-DD') => {
     if (!date) return null;
     return moment(date).format(format);
   },
   
-  /**
-   * Lấy các tham số phân trang từ request
-   * @param {Object} req - Express request object
-   * @returns {Object} - Các tham số phân trang
-   */
+
   getPaginationParams: (req) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
@@ -44,13 +25,6 @@ const dbService = {
     return { page, limit, offset };
   },
   
-  /**
-   * Tạo đối tượng phân trang
-   * @param {number} total - Tổng số bản ghi
-   * @param {number} limit - Số bản ghi mỗi trang
-   * @param {number} page - Trang hiện tại
-   * @returns {Object} - Thông tin phân trang
-   */
   createPagination: (total, limit, page) => {
     return {
       total,
@@ -60,11 +34,6 @@ const dbService = {
     };
   },
   
-  /**
-   * Tạo điều kiện WHERE từ các tham số tìm kiếm
-   * @param {Object} options - Các tùy chọn tìm kiếm
-   * @returns {Object} - Điều kiện WHERE và tham số
-   */
   createWhereCondition: (options) => {
     const {
       search,
@@ -126,13 +95,6 @@ const dbService = {
     return { whereClause, params };
   },
   
-  /**
-   * Chuyển đổi định dạng ngày trong danh sách kết quả
-   * @param {Array} results - Danh sách kết quả
-   * @param {Array} dateFields - Các trường ngày cần định dạng
-   * @param {string} format - Định dạng đầu ra
-   * @returns {Array} - Danh sách kết quả đã định dạng
-   */
   formatDateInResults: (results, dateFields = ['date', 'updateDate'], format = 'DD/MM/YYYY') => {
     return results.map(item => {
       const formattedItem = { ...item };

@@ -1,4 +1,3 @@
-// src/middleware/uploadErrorHandler.js
 const multer = require('multer');
 
 const uploadErrorHandler = (err, req, res, next) => {

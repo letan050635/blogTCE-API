@@ -6,17 +6,11 @@ const File = require('../models/File');
 const uploadErrorHandler = require('../middleware/uploadErrorHandler');
 
 const fileController = {
-  // Middleware xử lý upload file với error handler
   uploadMiddleware: [
     upload.array('files', 5),
     uploadErrorHandler
   ],
   
-  /**
-   * Xử lý upload file
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
-   */
   uploadFiles: async (req, res) => {
     try {
       // Log để debug
@@ -58,13 +52,13 @@ const fileController = {
           fileData.relatedType = relatedType;
           fileData.relatedId = parseInt(relatedId);
           
-          console.log('File data to save:', fileData);
+          //console.log('File data to save:', fileData);
           
           // Lưu thông tin file vào database
           const savedFile = await File.create(fileData);
           uploadedFiles.push(savedFile);
           
-          console.log(`File uploaded successfully: ${fileName}`);
+          //console.log(`File uploaded successfully: ${fileName}`);
           
           // Xóa file tạm sau khi upload thành công
           try {
@@ -119,11 +113,6 @@ const fileController = {
     }
   },
   
-  /**
-   * Lấy danh sách file theo item liên quan
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
-   */
   getFilesByRelatedItem: async (req, res) => {
     try {
       const { relatedType, relatedId } = req.params;
@@ -150,16 +139,11 @@ const fileController = {
     }
   },
   
-  /**
-   * Xóa file
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
-   */
   deleteFile: async (req, res) => {
     try {
       const { id } = req.params;
       
-      console.log(`Deleting file with ID: ${id}`);
+      //console.log(`Deleting file with ID: ${id}`);
       
       // Lấy thông tin file từ database
       const file = await File.findById(id);

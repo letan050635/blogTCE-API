@@ -1,4 +1,3 @@
-// src/models/File.js
 const BaseModel = require('./BaseModel');
 const { query } = require('../config/db');
 

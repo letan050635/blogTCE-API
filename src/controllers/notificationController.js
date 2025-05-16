@@ -3,9 +3,6 @@ const File = require('../models/File');
 const BaseController = require('./BaseController');
 const { driveService } = require('../services/fileService');
 
-/**
- * Controller xử lý thông báo
- */
 const notificationController = {
   // Lấy danh sách thông báo
   getNotifications: BaseController.getList(Notification),
@@ -46,9 +43,7 @@ const notificationController = {
       if (!existingNotification) {
         return res.status(404).json({ message: `Không tìm thấy thông báo` });
       }
-      
-      // updateDate sẽ được tự động set trong model
-      
+
       // Cập nhật thông báo
       const updatedNotification = await Notification.update(id, data);
       

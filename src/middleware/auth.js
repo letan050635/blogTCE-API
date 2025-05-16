@@ -2,11 +2,6 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 const { query } = require('../config/db');
 
-/**
- * Trích xuất token từ header
- * @param {Object} req - Express request object
- * @returns {string|null} - JWT token hoặc null
- */
 const extractToken = (req) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -15,11 +10,6 @@ const extractToken = (req) => {
   return authHeader.split(' ')[1];
 };
 
-/**
- * Lấy thông tin người dùng từ token
- * @param {string} token - JWT token
- * @returns {Object|null} - Thông tin người dùng hoặc null
- */
 const getUserFromToken = async (token) => {
   try {
     const decoded = jwt.verify(token, config.jwt.secret);
@@ -40,9 +30,6 @@ const getUserFromToken = async (token) => {
   }
 };
 
-/**
- * Middleware xác thực người dùng (bắt buộc)
- */
 exports.authenticate = async (req, res, next) => {
   try {
     const token = extractToken(req);
@@ -78,10 +65,6 @@ exports.authenticate = async (req, res, next) => {
   }
 };
 
-/**
- * Middleware kiểm tra quyền admin
- * Yêu cầu chạy sau middleware authenticate
- */
 exports.isAdmin = (req, res, next) => {
   if (!req.user) {
     return res.status(401).json({ message: 'Không có thông tin xác thực' });
@@ -94,10 +77,6 @@ exports.isAdmin = (req, res, next) => {
   next();
 };
 
-/**
- * Middleware xác thực người dùng (tùy chọn)
- * Không bắt buộc đăng nhập để tiếp tục
- */
 exports.optionalAuth = async (req, res, next) => {
   try {
     const token = extractToken(req);

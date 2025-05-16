@@ -3,9 +3,6 @@ const File = require('../models/File');
 const BaseController = require('./BaseController');
 const { driveService } = require('../services/fileService');
 
-/**
- * Controller xử lý quy định
- */
 const regulationController = {
   // Lấy danh sách quy định
   getRegulations: BaseController.getList(Regulation),
@@ -16,13 +13,9 @@ const regulationController = {
   // Tạo quy định mới
   createRegulation: async (req, res) => {
     try {
-      // Lấy dữ liệu từ request body
       const data = req.body;
-      
       // Đảm bảo không có updateDate khi tạo mới
       delete data.updateDate;
-      
-      // Tạo quy định mới
       const regulation = await Regulation.create(data);
       
       res.status(201).json({
@@ -46,9 +39,6 @@ const regulationController = {
       if (!existingRegulation) {
         return res.status(404).json({ message: `Không tìm thấy quy định` });
       }
-      
-      // updateDate sẽ được tự động set trong model
-      
       // Cập nhật quy định
       const updatedRegulation = await Regulation.update(id, data);
       
@@ -85,11 +75,9 @@ const regulationController = {
             console.warn(`Không thể xóa file ${file.fileId} từ Google Drive:`, error);
           }
         }
-        
         // Xóa thông tin file trong database
         await File.deleteByRelatedItem('regulation', id);
       }
-      
       // Xóa quy định
       await Regulation.delete(id);
       
@@ -106,11 +94,6 @@ const regulationController = {
   // Đánh dấu tất cả quy định là đã đọc
   markAllAsRead: BaseController.markAllAsRead(Regulation, 'quy định'),
   
-  /**
-   * Lấy danh sách quy định quan trọng
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
-   */
   getImportantRegulations: async (req, res) => {
     try {
       const limit = parseInt(req.query.limit) || 5;

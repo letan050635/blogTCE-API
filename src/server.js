@@ -36,8 +36,6 @@ const initializeDatabase = async () => {
       const isValid = await verifyDatabaseSchema();
       if (isValid) {
         console.log('Cơ sở dữ liệu sẵn sàng để sử dụng.');
-      } else {
-        console.warn('Cơ sở dữ liệu có thể không tương thích với ứng dụng này.');
       }
     }
   } catch (error) {
